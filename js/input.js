@@ -1,12 +1,17 @@
 var cursors;
 var fs = false;
+
 function preloadInput(){
 }
 
 
 function createInput(){
     //go fullscreen on click
-    fsClick(); //loaded from /lib/fbk.js
+    fsClick(); 
+    var fitScreen = getURLvar('fitScreen');
+    if(fitScreen){
+      resizeGame(); //fit window width
+    }
     cursors = game.input.keyboard.createCursorKeys(); 
 }
 
@@ -17,24 +22,15 @@ function updateInput(){
 /* Code by Kris Occhipinti http://filmsbykris.com
 GPLv3 */
 
-//fullscreen on click
-function fsClick(){
-  //center game
-  game.scale.pageAlignHorizontally = true;
-  game.scale.pageAlignVertically = true;
-  //game.input.onDown.add(fullscreen, this);
+function resizeGame() {
+  var height = window.innerHeight;
+  var width = window.innerWidth;
+  game.width = width;
+  game.height = height;
+  game.camera.setSize(width, height);
+  game.camera.setBoundsToWorld();
+  //game.world.setBounds(0, 0, width, height);
+  //game.stage.bounds.width = width;
+  //game.stage.bounds.height = height;
+  game.renderer.resize(width, height);
 }
-
-function fullscreen(){
-  //Set the game to stretch and fill the screen
-  //game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
-  if(fs == false){
-    fs = true;
-    game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
-    game.scale.startFullScreen();
-  }else{
-    fs = false;
-    game.scale.stopFullScreen();
-  }
-}
-

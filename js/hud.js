@@ -2,19 +2,22 @@ var msgText;
 var msgTimeout;
 var HUDtext;
 var fs_btn;
+var debug = getURLvar('debug');
 
 function preloadHUD(){
   game.load.bitmapFont('font1', 'res/fonts/set1/font.png', 'res/fonts/set1/font.fnt');
-  game.load.spritesheet("mute","res/mute.png",32,32);
-  game.load.image("fullscreen","res/fullscreen.png",32,32);
+  var sprites = ['mute','fullscreen'];
+  sprites.forEach(function(s){
+    game.load.spritesheet(s,"res/hud/"+s+".png",32,32);
+  });
 
 }
 
 function createHUD(){
+  createFSBtn();
   createMuteBtn();
   createMSG();
   createHUDtext();
-  createFSBtn();
 
   //set timeout
   msgTimeout = game.time.now;
@@ -22,6 +25,8 @@ function createHUD(){
   //load Startup Text
   msg("GO!!!");
 
+  //advanced timing for FPS count
+  game.time.advancedTiming = true;
 }
 
 function updateHUD(){
@@ -30,6 +35,8 @@ function updateHUD(){
   var txt = "Seeds: " + seedCount + "\n";
   //if jetpack has power display it
   if(power > 0){txt += "Jetpack: " + power + "%\n";}
+  if(debug){txt += "FPS: " + game.time.fps + "\n";} 
+
   HUDtext.setText(txt);
 
   //clear text message after timeout
@@ -79,4 +86,41 @@ function createHUDtext(){
   HUDtext.fixedToCamera = true;
   HUDtext.cameraOffset.setTo(10, 10);
 }
+
+function muteClick(){
+  if(mute == false){
+    mute = true;
+    music.stop();
+    mute_btn.frame = 1;
+  }else{
+    mute = false;
+    music.play();
+    mute_btn.frame = 0;
+  }
+}
+
+
+/* Code by Kris Occhipinti http://filmsbykris.com
+GPLv3 */
+
+//fullscreen on click
+function fsClick(){
+  //center game
+  game.scale.pageAlignHorizontally = true;
+  game.scale.pageAlignVertically = true;
+  //game.input.onDown.add(fullscreen, this);
+  game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+}
+
+function fullscreen(){
+  //Set the game to stretch and fill the screen
+  if (game.scale.isFullScreen){
+    game.scale.stopFullScreen();
+    fs_btn.frame = 0;
+  }else{
+    game.scale.startFullScreen();
+    fs_btn.frame = 1;
+  }
+}
+
 
